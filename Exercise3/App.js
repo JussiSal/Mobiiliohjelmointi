@@ -49,6 +49,7 @@ export default function App() {
         <Text>History</Text>
         <FlatList
           data={history}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) =>
             <Text>{item.calc}</Text>}
         />
