@@ -1,13 +1,15 @@
-import React, { useState, useEffect }from 'react';
+import React, { useState, useEffect } from 'react';
 import * as SQLite from 'expo-sqlite';
-import { Text, View, TextInput, Button, FlatList, StyleSheet } from 'react-native';
+import { Text, View, FlatList, StyleSheet } from 'react-native';
+import { ListItem, Input, Header, Button } from 'react-native-elements';
 
 const db = SQLite.openDatabase('shoppinglistdb.db');
 
 export default function App() {
-  const [ammount, setAmmount] = React.useState('');
-  const [product, setProduct] = React.useState('');
-  const [list, setList] = React.useState([]);
+  const [ammount, setAmmount] = useState('');
+  const [product, setProduct] = useState('');
+  const [disable, setDisable] = useState(true);
+  const [list, setList] = useState([]);
 
   useEffect(() => {
     db.transaction(tx => {
@@ -16,19 +18,29 @@ export default function App() {
     updateList();
   }, []);
 
+  useEffect(() => {
+    if (ammount == '' || product == '') {
+      setDisable(true);
+    } else {
+      setDisable(false);
+    }
+  }, [ammount, product]);
+
   const updateList = () => {
     db.transaction(tx => {
       tx.executeSql('select * from shoppinglist;', [], (_, { rows }) =>
         setList(rows._array)
-      ); 
+      );
     });
   }
 
   const additem = () => {
     db.transaction(tx => {
-      tx.executeSql('insert into shoppinglist (product, ammount) values (?, ?);', [product, ammount]);    
+      tx.executeSql('insert into shoppinglist (product, ammount) values (?, ?);', [product, ammount]);
     }, null, updateList
-  )
+    );
+    setProduct('');
+    setAmmount('');
   }
 
   const deleteitem = (id) => {
@@ -38,46 +50,45 @@ export default function App() {
       }, null, updateList
     )
   }
-  const listSeparator = () => {
-    return (
-      <View
-        style={{
-          height: 5,
-          width: "80%",
-          backgroundColor: "#fff",
-          marginLeft: "10%"
-        }}
-      />
-    );
-  };
+
+  const renderItem = ({ item }) => (
+    <ListItem
+      title={item.product}
+      subtitle={item.ammount}
+      rightSubtitle= {<Text onPress={() => deleteitem(item.id)} style={{color: '#d3d3d3'}}>bought</Text>}
+      bottomDivider
+      chevron
+    />
+  )
 
   return (
-    <View style={styles.container}>
-
-      <TextInput
+    <View >
+      <Header
+        centerComponent={{ text: 'SHOPPING LIST', style: { color: '#fff' , marginBottom: 30} }}
+        containerStyle={{height: 60}}
+      />
+      <Input
         placeholder='Product'
-        style={{ width: 200, borderColor: 'gray', borderWidth: 1 , marginTop: 60}}
+        label='PRODUCT'
+        containerStyle={{ marginTop: 10 }}
         onChangeText={product => setProduct(product)}
         value={product}
       />
-      <TextInput
-      placeholder='Ammount'
-        style={{ width: 200, borderColor: 'gray', borderWidth: 1 }}
+      <Input
+        placeholder='Ammount'
+        label='AMMOUNT'
         onChangeText={ammount => setAmmount(ammount)}
         value={ammount}
       />
-      <Button onPress={additem} title="Save" />
-
-      <Text style={{ color: 'blue' }}>Shopping List</Text>
+      <Button 
+        onPress={additem} title="SAVE"
+        containerStyle={{paddingHorizontal: 10}}
+        disabled={disable}
+      />
       <FlatList
         data={list}
         keyExtractor={item => item.id.toString()}
-        ItemSeparatorComponent={listSeparator}
-        renderItem={({ item }) =>
-          <View style={styles.listcontainer}>
-          <Text>{item.product}, {item.ammount}</Text>
-          <Text style={{ color: 'blue' }} onPress={() => deleteitem(item.id)}> bought</Text>
-          </View>}
+        renderItem={renderItem}
       />
     </View>
 
