@@ -9,8 +9,6 @@ export default function Map({ route }) {
 
     useEffect(() => {
         const url = 'http://open.mapquestapi.com/geocoding/v1/address?key=AqM6Okpf5564zBKTIrGqqpxHcUYY3FAN&location=' + address
-
-        console.log(url);
         fetch(url, {
             method: 'GET',
             mode: 'no-cors',
@@ -37,7 +35,7 @@ export default function Map({ route }) {
                 style={{
                     flex: 1,
                     position: 'absolute',
-                    top: 0, left: 0, right: 0, bottom: 70,
+                    top: 0, left: 0, right: 0, bottom: 0,
                 }}
                 initialRegion={{
                     latitude: koordinaatit.lat,
@@ -59,7 +57,7 @@ export default function Map({ route }) {
                         latitude: koordinaatit.lat,
                         longitude: koordinaatit.lng,
                     }}
-                    title='Haaga-Helia' />
+                    title={address} />
 
             </MapView>
         </View>
