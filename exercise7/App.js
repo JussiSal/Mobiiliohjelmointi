@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Button, TextInput, Alert, Image } from 'react-native';
 
 export default function App() {
 
@@ -12,16 +12,43 @@ export default function App() {
     fetch(searchUrl)
       .then((response) => response.json())
       .then((data) => {
-        setJobs(data);
+        setRecipies(data.results);
+        console.log(data.results)
       })
       .catch((error) => {
         Alert.alert('Error', error);
       });
   }
 
+  const renderItem = ({ item }) => (
+    <View>
+      <Text>{item.title}</Text>
+      <Image source ={{ uri: item.thumbnail }} style={{width: 50, height: 50}}/>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <View style={{ flex: 9 , paddingTop: 40}}>
+        <FlatList
+          style={{ marginLeft: "5%" }}
+          keyExtractor={item => item.href}
+          renderItem={renderItem}
+          data={recipies}
+        />
+      </View>
+      <View style={{ flex: 1}}>
+        <TextInput
+          style={{borderColor: 'black', borderWidth:1, width: 100, paddingBottom: 10}}
+          placeholder='Search'
+          value={userInput}
+          onChangeText={(value) => setUserInput(value)}
+        />
+        <Button
+          title="FIND"
+          onPress={() => find()}
+        />
+      </View>
     </View>
   );
 }
