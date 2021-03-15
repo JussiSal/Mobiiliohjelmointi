@@ -1,12 +1,7 @@
 {
   "expo": {
-    "name": "shopping list bd",
-    "slug": "hhmobile_shoppinglist_db",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "name": "textToSpeak",
+    "slug": "textToSpeak",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,6 +19,14 @@
     "ios": {
       "supportsTablet": true
     },
-    "description": ""
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
   }
 }
